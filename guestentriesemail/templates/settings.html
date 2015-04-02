@@ -1,0 +1,43 @@
+{% import "_includes/forms" as forms %}
+
+{% if guestEntiresPluginInstalled == true %}
+  {% if editableSections|length %}
+  	<div id="defaults">
+  		<table class="data fullwidth">
+  			<thead>
+  				<th>Section</th>
+  				<th>Email Addresses (separated by comma)</th>
+  				<th>Email Subject (ex: [Email Subject]: [Entry Title])</th>
+  				<th>Enable Email</th>
+  			</thead>
+  			{% for handle, sectionData in editableSections %}
+  				<tr>
+  					<td>{{ sectionData['section'].name }}</td>
+  					<td>
+  						{{ forms.text({
+  							name: "emailAddresses[" ~ handle ~ "]",
+  							value:   (settings.emailAddresses[handle] is defined and settings.emailAddresses[handle] is not empty ? settings.emailAddresses[handle] : ''),
+  						}) }}
+  					</td>
+  					<td>
+  						{{ forms.text({
+  							name: "emailSubject[" ~ handle ~ "]",
+  							value:   (settings.emailSubject[handle] is defined and settings.emailSubject[handle] is not empty ? settings.emailSubject[handle] : ''),
+  						}) }}
+  					</td>
+  					<td>
+  						{{ forms.lightswitch({
+  							name: "sendEmail[" ~ handle ~ "]",
+  							on:   (settings.sendEmail[handle] is defined and settings.sendEmail[handle] is not empty ? settings.sendEmail[handle] : false),
+  						}) }}
+  					</td>
+  				</tr>
+  			{% endfor %}
+  		</table>
+  	</div>
+  {% else %}
+  	No sections available.
+  {% endif %}
+{% else %}
+  Hi. This plugin requires Pixel &amp; Tonic&rsquo;s <a href="https://github.com/pixelandtonic/GuestEntries">Guest Entries plugin</a>. Come back here after you&rsquo;ve enabled and setup that plugin.
+{% endif %}
