@@ -15,7 +15,8 @@ class GuestEntriesEmailPlugin extends BasePlugin
       $sectionHandle = $section['entryTypes'][0]['attributes']['handle'];
       
       // get settings
-      $settings = $this->getSettings();
+      //$settings = $this->getSettings();
+      $settings = craft()->plugins->getPlugin('guestentriesemail')->getSettings();
       $sendEmail = $settings['attributes']['sendEmail'][$sectionHandle];
       $emailSubject = $settings['attributes']['emailSubject'][$sectionHandle] . ': ' . $entryModel['title'];
       $emailAddresses = $settings['attributes']['emailAddresses'][$sectionHandle];
@@ -70,7 +71,7 @@ class GuestEntriesEmailPlugin extends BasePlugin
   }
   public function getVersion()
   {
-    return '0.1.0';
+    return '0.1.1';
   }
   public function getDeveloper()
   {
