@@ -26,18 +26,38 @@ class GuestEntriesEmailPlugin extends BasePlugin
         $sendToEmails = array_map('trim', explode(',', $emailAddresses));
         
         // assemble message
-        $message = '<p><b>Title:</b> ' . $entryModel->title . '</p>';
-        
-        $entryAttributes = craft()->request->post['fields'];
-        foreach ($entryAttributes as $key => $value) {
-          if ($value != NULL) {
-            $fieldTitle = craft()->fields->getFieldByHandle($key);
-            
-            if ($fieldTitle != NULL) {
-              $message .= '<p><b>' . $fieldTitle . ':</b> ' . $value . '</p>';
-            } else {
-              $message .= '<p><b>' . $key . ':</b> ' . $value . '</p>';
+        $message = "<p><b>$emailSubject</b></p>\n";
+
+        foreach ($entryModel->getFieldLayout()->getFields() as $fieldLayoutField) {
+          $field = $fieldLayoutField->getField();
+          $fieldValue = $entryModel->getFieldValue($field->handle);
+
+          if(gettype($fieldValue) == "string") {
+            // most fields
+            $message .= "<p><b>" . $field->name . ":</b> " . $fieldValue . "</p>\n";
+          }
+          else if(gettype($fieldValue) == "array") {
+            // checkboxes, multi-selects
+            $fieldContent = "";
+            foreach($fieldValue as $fieldValueItem) {
+              $fieldContent .= $fieldValueItem . ", ";
             }
+
+            $fieldContent = rtrim($fieldContent, ", ");
+
+            $message .= "<p><b>" . $field->name . ":</b> " . $fieldContent . "</p>\n";
+          }
+          else if ($field->type == "Assets") {
+            // assets
+            $fieldContent = " <br>";
+
+            foreach($fieldValue->find() as $asset) {
+              $fieldContent .= '<a href="' . $asset->url . '">' . $asset->url . '</a>,<br>';
+            }
+
+            $fieldContent = substr($fieldContent, 0, strlen($fieldContent) - 5);
+
+            $message .= "<p><b>" . $field->name . ":</b> " . $fieldContent . "</p>\n";
           }
         }
         
