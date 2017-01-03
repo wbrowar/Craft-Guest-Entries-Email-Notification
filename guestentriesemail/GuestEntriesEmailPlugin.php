@@ -52,7 +52,7 @@ class GuestEntriesEmailPlugin extends BasePlugin
             $fieldContent = " <br>";
 
             foreach($fieldValue->find() as $asset) {
-              $fieldContent .= '<a href="' . $asset->url . '">' . $asset->url . '</a>,<br>';
+              $fieldContent .= '<a href="' . $asset->getUrl() . '">' . $asset->getUrl() . '</a>,<br>';
             }
 
             $fieldContent = substr($fieldContent, 0, strlen($fieldContent) - 5);
