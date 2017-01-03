@@ -56,7 +56,8 @@ class GuestEntriesEmailPlugin extends BasePlugin
             $email = new EmailModel();
             $email->toEmail = $value;
             $email->subject = $emailSubject;
-            $email->body    = $message;
+            $email->htmlBody = $message;
+            $email->body = strip_tags($message);
       
             craft()->email->sendEmail($email);
           }
