@@ -17,48 +17,50 @@ class GuestEntriesEmailPlugin extends BasePlugin
       // get settings
       //$settings = $this->getSettings();
       $settings = craft()->plugins->getPlugin('guestentriesemail')->getSettings();
-      $sendEmail = $settings['attributes']['sendEmail'][$sectionHandle];
-      $emailSubject = $settings['attributes']['emailSubject'][$sectionHandle] . ': ' . $entryModel['title'];
-      $emailAddresses = $settings['attributes']['emailAddresses'][$sectionHandle];
-      
-      if ($sendEmail === '1') {
-        // setup sendto email addresses
-        $sendToEmails = array_map('trim', explode(',', $emailAddresses));
+      if (isset($settings['attributes']['sendEmail'][$sectionHandle])) {
+        $sendEmail = $settings['attributes']['sendEmail'][$sectionHandle];
+        $emailSubject = $settings['attributes']['emailSubject'][$sectionHandle] . ': ' . $entryModel['title'];
+        $emailAddresses = $settings['attributes']['emailAddresses'][$sectionHandle];
         
-        // assemble message
-        $message = '<p><b>Title:</b> ' . $entryModel->title . '</p>';
-        
-        $entryAttributes = craft()->request->post['fields'];
-        foreach ($entryAttributes as $key => $value) {
-          if ($value != NULL) {
-            $fieldTitle = craft()->fields->getFieldByHandle($key);
-            
-            if ($fieldTitle != NULL) {
-              $message .= '<p><b>' . $fieldTitle . ':</b> ' . $value . '</p>';
-            } else {
-              $message .= '<p><b>' . $key . ':</b> ' . $value . '</p>';
+        if ($sendEmail === '1') {
+          // setup sendto email addresses
+          $sendToEmails = array_map('trim', explode(',', $emailAddresses));
+          
+          // assemble message
+          $message = '<p><b>Title:</b> ' . $entryModel->title . '</p>';
+          
+          $entryAttributes = craft()->request->post['fields'];
+          foreach ($entryAttributes as $key => $value) {
+            if ($value != NULL) {
+              $fieldTitle = craft()->fields->getFieldByHandle($key);
+              
+              if ($fieldTitle != NULL) {
+                $message .= '<p><b>' . $fieldTitle . ':</b> ' . $value . '</p>';
+              } else {
+                $message .= '<p><b>' . $key . ':</b> ' . $value . '</p>';
+              }
             }
           }
-        }
+          
+          // debug plugin
+          /*
+          print('<pre style="color: white; white-space: pre;">');
+          var_dump($message);
+          print('</pre>');
+          $entryModel->addError('title', $message);
+          $event->isValid = false;
+          */
+          
+          // send email notification
+          if ($event->isValid == true) {
+            foreach ($sendToEmails as $value) {
+              $email = new EmailModel();
+              $email->toEmail = $value;
+              $email->subject = $emailSubject;
+              $email->body    = $message;
         
-        // debug plugin
-        /*
-        print('<pre style="color: white; white-space: pre;">');
-        var_dump($message);
-        print('</pre>');
-        $entryModel->addError('title', $message);
-        $event->isValid = false;
-        */
-        
-        // send email notification
-        if ($event->isValid == true) {
-          foreach ($sendToEmails as $value) {
-            $email = new EmailModel();
-            $email->toEmail = $value;
-            $email->subject = $emailSubject;
-            $email->body    = $message;
-      
-            craft()->email->sendEmail($email);
+              craft()->email->sendEmail($email);
+            }
           }
         }
       }
