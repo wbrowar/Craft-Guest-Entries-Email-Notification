@@ -7,7 +7,7 @@ class GuestEntriesEmailPlugin extends BasePlugin
   
   public function init()
 	{
-  	craft()->on('guestEntries.beforeSave', function(GuestEntriesEvent $event) {
+  	craft()->on('guestEntries.onSuccess', function(GuestEntriesEvent $event) {
     	// get entry object
       $entryModel = $event->params['entry'];
       $sectionId = $entryModel['attributes']['sectionId'];

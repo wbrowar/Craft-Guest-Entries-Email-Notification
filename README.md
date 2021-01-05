@@ -8,7 +8,7 @@ This Craft CMS 2.x plugin is no longer supported, but it is fully functional, an
 
 Extend Pixel &amp; Tonic&rsquo;s [Guest Entries](https://github.com/pixelandtonic/GuestEntries/) plugin with email notifications.
 
-**NOTE: this plugin requires the Guest Entries plugin**
+**NOTE: this plugin requires the Guest Entries plugin version 1.5.0 or greater**
 
 ## Installation
 1. Upload the guestentriesemail/ folder to your craft/plugins/ folder.
