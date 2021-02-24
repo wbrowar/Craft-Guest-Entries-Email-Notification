@@ -12,7 +12,7 @@ class GuestEntriesEmailPlugin extends BasePlugin
       $entryModel = $event->params['entry'];
       $sectionId = $entryModel['attributes']['sectionId'];
       $section = craft()->sections->getSectionById($sectionId);
-      $sectionHandle = $section['entryTypes'][0]['attributes']['handle'];
+      $sectionHandle = $section['handle'];
       
       // get settings
       //$settings = $this->getSettings();
